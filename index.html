@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ẩm Thực Network</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #ff6b6b;
+      --secondary: #4ecdc4;
+      --dark: #2c3e50;
+      --light: #f8f9fa;
+      --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #0f0f1e;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* Background Network Effect */
+    .bg-network {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+      background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.3) 0%, transparent 50%),
+                  radial-gradient(circle at 40% 40%, rgba(78, 205, 196, 0.2) 0%, transparent 50%);
+      background-size: 200% 200%;
+      animation: networkPulse 15s ease infinite;
+    }
+
+    @keyframes networkPulse {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    header {
+      padding: 1.5rem 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      background: rgba(15, 15, 30, 0.7);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 2rem;
+      font-weight: 500;
+      transition: 0.3s;
+    }
+
+    nav a:hover {
+      color: var(--primary);
+    }
+
+    .search-box {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      width: 300px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .search-box:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 5%;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 3rem;
+      margin-bottom: 3rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .food-card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.4s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .food-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: var(--gradient);
+      opacity: 0;
+      transition: 0.4s;
+      z-index: -1;
+    }
+
+    .food-card:hover::before {
+      opacity: 0.2;
+    }
+
+    .food-card:hover {
+      transform: translateY(-15px) scale(1.03);
+      box-shadow: 0 20px 40px rgba(255, 107, 107, 0.3);
+      border-color: var(--primary);
+    }
+
+    .food-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      transition: 0.4s;
+    }
+
+    .food-card:hover .food-img {
+      transform: scale(1.1);
+    }
+
+    .food-info {
+      padding: 1.5rem;
+    }
+
+    .food-title {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      color: #fff;
+    }
+
+    .food-desc {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 1rem;
+    }
+
+    .food-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      background: rgba(255, 107, 107, 0.2);
+      color: var(--primary);
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      border: 1px solid var(--primary);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(10px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+    }
+
+    .modal-content {
+      background: rgba(30, 30, 60, 0.9);
+      border-radius: 20px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+    }
+
+    .close {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: #fff;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .modal-img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-title {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .ingredients, .instructions {
+      margin: 1.5rem 0;
+    }
+
+    .ingredients h3, .instructions h3 {
+      color: var(--secondary);
+      margin-bottom: 0.5rem;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .search-box {
+        width: 100%;
+      }
+      h1 {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-network"></div>
+
+  <header>
+    <div class="logo">Ẩm Thực Network</div>
+    <nav>
+      <a href="#">Trang chủ</a>
+      <a href="#">Món ngon</a>
+      <a href="#">Liên hệ</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <input type="text" class="search-box" placeholder="Tìm món ăn..." id="searchInput" />
+
+    <h1>Khám Phá Ẩm Thực</h1>
+
+    <div class="food-grid" id="foodGrid">
+      <!-- Các món ăn sẽ được thêm bằng JS -->
+    </div>
+  </div>
+
+  <!-- Modal chi tiết món ăn -->
+  <div class="modal" id="foodModal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <img class="modal-img" id="modalImg" src="" alt="">
+      <div class="modal-body">
+        <h2 class="modal-title" id="modalTitle"></h2>
+        <div class="food-tags" id="modalTags"></div>
+        <div class="ingredients">
+          <h3>Nguyên liệu:</h3>
+          <ul id="modalIngredients"></ul>
+        </div>
+        <div class="instructions">
+          <h3>Cách làm:</h3>
+          <ol id="modalInstructions"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dữ liệu món ăn
+    const foods = [
+      {
+        id: 1,
+        title: "Phở Bò Hà Nội",
+        desc: "Món phở truyền thống với nước dùng trong, thơm lừng.",
+        img: "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=400",
+        tags: ["Món nước", "Truyền thống", "Bò"],
+        ingredients: ["Bánh phở", "Thịt bò tái", "Hành lá", "Gừng nướng", "Hồi, quế", "Nước mắm"],
+        instructions: [
+          "Ninh xương bò với gừng, hành nướng, hồi, quế trong 6-8 tiếng.",
+          "Luộc bánh phở, xếp thịt bò tái lên trên.",
+          "Chan nước dùng nóng, thêm hành lá, rau thơm.",
+          "Dùng kèm tương ớt, chanh, giá đỗ."
+        ]
+      },
+      {
+        id: 2,
+        title: "Bánh Mì Pate",
+        desc: "Bánh mì giòn tan với pate béo ngậy và rau sống.",
+        img: "https://images.unsplash.com/photo-1574520484860-bbb41d1e12e0?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=700",
+        tags: ["Đường phố", "Nhanh gọn", "Pate"],
+        ingredients: ["Bánh mì", "Pate gan", "Dưa leo", "Đồ chua", "Rau mùi", "Tương ớt"],
+        instructions: [
+          "Cắt bánh mì, phết pate.",
+          "Thêm dưa leo, đồ chua, rau mùi.",
+          "Rắc tiêu, nhỏ tương ớt.",
+          "Dùng nóng."
+        ]
+      },
+      {
+        id: 3,
+        title: "Cơm Tấm Sườn Bì",
+        desc: "Cơm tấm thơm lừng với sườn nướng và bì trộn.",
+        img: "https://media.istockphoto.com/id/1215850319/vi/anh/m%C3%B3n-%C4%83n-%C4%91%C6%B0%E1%BB%9Dng-ph%E1%BB%91-%C4%91%E1%BA%B7c-tr%C6%B0ng-c%E1%BB%A7a-vi%E1%BB%87t-nam-s%C3%A0i-g%C3%B2n-v%E1%BB%9Bi-s%C6%B0%E1%BB%9Dn-heo-n%C6%B0%E1%BB%9Bng-v%C3%A0-rau-c%E1%BB%A7.jpg?s=2048x2048&w=is&k=20&c=Q6WBLNpumUNNjg2kn2zfmM9ng0vF1UU6BKCycFHe9yg=",
+        tags: ["Cơm tấm", "Sài Gòn", "Thịt nướng"],
+        ingredients: ["Cơm tấm", "Sườn nướng", "Bì trộn", "Trứng ốp la", "Dưa leo", "Nước mắm"],
+        instructions: [
+          "Nướng sườn với mật ong và gia vị.",
+          "Trộn bì với thính gạo.",
+          "Xếp cơm, sườn, bì, trứng lên đĩa.",
+          "Chan nước mắm ngọt."
+        ]
+      },
+      {
+        id: 4,
+        title: "Bún Chả Hà Nội",
+        desc: "Chả nướng thơm lừng ăn kèm bún và rau sống.",
+        img: "https://media.istockphoto.com/id/1190757916/vi/anh/b%C3%BAn-ch%E1%BA%A3-hay-m%C3%AC-g%E1%BA%A1o-tr%E1%BA%AFng-l%E1%BA%A1nh-vi%E1%BB%87t-nam-%C4%83n-k%C3%A8m-v%E1%BB%9Bi-th%E1%BB%8Bt-l%E1%BB%A3n-n%C6%B0%E1%BB%9Bng-v%C3%A0-nhi%E1%BB%81u-lo%E1%BA%A1i-th%E1%BA%A3o-m%E1%BB%99c-t%E1%BA%A1i-m%E1%BB%99t.jpg?s=2048x2048&w=is&k=20&c=sg3HVzDeo1WbiZZBSgMx8jjLhO8bxU-EQaJqTHoLWZM=",
+        tags: ["Món nướng", "Hà Nội", "Thịt heo"],
+        ingredients: ["Thịt heo nạc", "Bún tươi", "Rau sống", "Nước mắm chua ngọt", "Đu đủ xanh"],
+        instructions: [
+          "Ướp thịt với mật ong, nước mắm, hành tỏi.",
+          "Nướng chả trên than hoa.",
+          "Pha nước mắm với tỏi, ớt, chanh, đường.",
+          "Dùng kèm bún, rau, đu đủ bào."
+        ]
+      }
+    ];
+
+    // Hiển thị danh sách món ăn
+    const foodGrid = document.getElementById('foodGrid');
+    const searchInput = document.getElementById('searchInput');
+    const modal = document.getElementById('foodModal');
+    const closeBtn = document.querySelector('.close');
+
+    function renderFoods(foodList) {
+      foodGrid.innerHTML = '';
+      foodList.forEach(food => {
+        const card = document.createElement('div');
+        card.className = 'food-card';
+        card.onclick = () => openModal(food);
+
+        card.innerHTML = `
+          <img src="${food.img}" alt="${food.title}" class="food-img">
+          <div class="food-info">
+            <h3 class="food-title">${food.title}</h3>
+            <p class="food-desc">${food.desc}</p>
+            <div class="food-tags">
+              ${food.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            </div>
+          </div>
+        `;
+        foodGrid.appendChild(card);
+      });
+    }
+
+    // Mở modal
+    function openModal(food) {
+      document.getElementById('modalImg').src = food.img;
+      document.getElementById('modalTitle').textContent = food.title;
+      document.getElementById('modalTags').innerHTML = food.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+
+      const ingList = document.getElementById('modalIngredients');
+      ingList.innerHTML = food.ingredients.map(i => `<li>${i}</li>`).join('');
+
+      const insList = document.getElementById('modalInstructions');
+      insList.innerHTML = food.instructions.map(i => `<li>${i}</li>`).join('');
+
+      modal.style.display = 'flex';
+    }
+
+    // Đóng modal
+    closeBtn.onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => {
+      if (e.target === modal) modal.style.display = 'none';
+    };
+
+    // Tìm kiếm
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.toLowerCase();
+      const filtered = foods.filter(food => 
+        food.title.toLowerCase().includes(query) || 
+        food.tags.some(tag => tag.toLowerCase().includes(query))
+      );
+      renderFoods(filtered);
+    });
+
+    // Khởi tạo
+    renderFoods(foods);
+  </script>
+</body>
+</html>
